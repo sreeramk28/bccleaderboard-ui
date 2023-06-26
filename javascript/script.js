@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", showTopPlayers());
 
 async function showTopPlayers() {
-  const response = await fetch("http://localhost:8080/bestPlayers");
+  const response = await fetch("https://bccleaderboard.onrender.com/bestPlayers");
   const jsonData = await response.json();
 
   let playerArray = []
