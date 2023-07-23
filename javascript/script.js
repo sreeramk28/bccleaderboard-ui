@@ -6,11 +6,7 @@ async function showTopPlayers() {
 
   let playerArray = []
   jsonData.topPlayers.forEach(player => {
-    playerArray.push([player.username, Number(player.monthScore)]);
-  });
-  // console.log(typeof(playerArray));
-  playerArray.sort((a, b) => {
-    return b[1] - a[1];
+    playerArray.push([player.username, player.clubScoreMonthAggregate, player.tournamentPointsMonthAggregate, player.tiebreakPointsMonthAggregate]);
   });
   let table = document.getElementById("boardbody");
   for (let i = 0; i < playerArray.length; i++) {
