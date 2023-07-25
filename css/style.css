@@ -1,14 +1,32 @@
-.container {
+.tb-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0cap;
+  font-size: 14px;
 }
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0rem;
+}
+
+.btn-margin {
+  margin: 1rem;
+}
+
 .table-transparency {
-  opacity: 0.8;
+  opacity: 0.7;
 }
+
 body {
-  background-image: url('../images/bg.jpg');
-  background-size: cover;
+  background: linear-gradient(black, rgb(19, 30, 126));
+  background-attachment: fixed;
   font-family: 'Roboto Mono', monospace;
+}
+
+mark {
+  background-color: yellow;
+  color: black;
 }
