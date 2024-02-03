@@ -1,20 +1,61 @@
-const blitzOption = document.getElementById("blitz");
-blitzOption.addEventListener("change", showTopPlayers);
+const lichessOption = document.getElementById("lichess");
+lichessOption.addEventListener("change", show_lichess_top_players);
 
-async function showTopPlayers() {
-  
-  let tableContainer = document.getElementById("container");
-  
-  /* Show a spinner */
+const chessComOption = document.getElementById("chesscom");
+chessComOption.addEventListener("change", show_chesscom_top_players);
+
+const PROD_BASE_URL = "https://bccleaderboard.onrender.com";
+const LOCAL_BASE_URL = "http://localhost:8080";
+const ENDPOINT = "/bestPlayers";
+const PLATFORM_CHESSCOM = "?platform=chesscom";
+const PLATFORM_LICHESS = "?platform=lichess";
+
+
+function get_new_spinner() {
   let spinner = document.createElement("div");
   spinner.classList.add("spinner-border");
   spinner.classList.add("text-light");
+  return spinner;
+}
+
+function clearElement(element) {
+  element.innerHTML = "";
+}
+
+function get_query_params() {
+  let params = "";
+  for (let i = 1; i <= 5; i++) {
+    //"tmt-" + toString(i)
+    let eId = "tmt-" + i;
+    let url = document.getElementById(eId).value;
+    let trimmedUrl = url.trim();
+    if (trimmedUrl.length > 0) {
+      params += trimmedUrl;
+      params += ",";
+    }
+  }
+  return params.slice(0, -1);
+}
+
+async function process_chesscom_top_players() {
+
+  let params = get_query_params();
+  let apiUrl = PROD_BASE_URL + ENDPOINT + PLATFORM_CHESSCOM;
+
+  if (params.length > 0) {
+    apiUrl += "&urls=" + params;
+  }
+  
+  //alert(apiUrl);
+
+  let tableContainer = document.getElementById("container");
+  clearElement(tableContainer);
+
+  /* Show a spinner */
+  let spinner = get_new_spinner();
   tableContainer.appendChild(spinner);
-  
-  const PROD_BASE_URL = "https://bccleaderboard.onrender.com";
-  const LOCAL_BASE_URL = "http://localhost:8080";
-  
-  const response = await fetch(PROD_BASE_URL + "/bestPlayers");
+
+  const response = await fetch(apiUrl);
   const jsonData = await response.json();
 
   /* Remove Spinner and show data */
@@ -24,7 +65,65 @@ async function showTopPlayers() {
     <table id="board" class="table table-dark text-center table-transparency">
     </table>
   `;
+  show_results(jsonData);
+
+}
+
+async function show_chesscom_top_players() {
+  let tableContainer = document.getElementById("container");
+  clearElement(tableContainer);
+
+  tableContainer.innerHTML = `
+    <form id="chesscom-form">
+      <div class="mb-3">
+        <label for="tmt-1" class="form-label" style="color:white;">Enter Chess.com tournament URLs (Sample - https://www.chess.com/tournament/live/bcc-weekly-blitz-4560665)</label>
+        <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-2" class="form-control" placeholder="URL 2">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-3" class="form-control" placeholder="URL 3">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-4" class="form-control" placeholder="URL 4">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-5" class="form-control" placeholder="URL 5">
+      </div>
+      <button id="chesscom-submit" type="button" class="btn btn-primary">Submit</button>
+    </form>
+  `;
+
+  const chessComSubmitButton = document.getElementById("chesscom-submit");
+  chessComSubmitButton.addEventListener("click", process_chesscom_top_players);
+
+}
+
+async function show_lichess_top_players() {
   
+  let tableContainer = document.getElementById("container");
+  clearElement(tableContainer);
+
+  /* Show a spinner */
+  let spinner = get_new_spinner();
+  tableContainer.appendChild(spinner);
+  
+  const response = await fetch(PROD_BASE_URL + ENDPOINT + PLATFORM_LICHESS);
+  const jsonData = await response.json();
+
+  /* Remove Spinner and show data */
+  tableContainer.removeChild(spinner);
+
+  tableContainer.innerHTML = `
+    <table id="board" class="table table-dark text-center table-transparency">
+    </table>
+  `;
+  show_results(jsonData);
+
+}
+
+function show_results(jsonData) {
   let playerArray = []
   jsonData.topPlayers.forEach(player => {
     playerArray.push([player.username, player.clubScoreMonthAggregate, player.tournamentPointsMonthAggregate, player.tiebreakPointsMonthAggregate]);
