@@ -4,6 +4,11 @@ lichessOption.addEventListener("change", show_lichess_top_players);
 const chessComOption = document.getElementById("chesscom");
 chessComOption.addEventListener("change", show_chesscom_top_players);
 
+const chessComNoteButton = document.getElementById("chesscom-note");
+chessComNoteButton.addEventListener("click", () => {
+  alert("Tiebreak points data is not exposed by ChessCom APIs. So, players having equal values of both Ranking points (given by BCC) and TB1 (tournament points aggregate) are ordered randomly. TB2 (tournament tiebreak points aggregate) has to be manually computed from the tournament standings pages to determine the actual order.");
+});
+
 const PROD_BASE_URL = "https://bccleaderboard.onrender.com";
 const LOCAL_BASE_URL = "http://localhost:8080";
 const ENDPOINT = "/bestPlayers";
@@ -66,14 +71,42 @@ async function process_chesscom_top_players() {
 
 }
 
+async function process_lichess_top_players() {
+  let params = get_query_params();
+  let apiUrl = PROD_BASE_URL + ENDPOINT + PLATFORM_LICHESS;
+
+  if (params.length > 0) {
+    apiUrl += "&urls=" + params;
+  }
+  
+  let tableContainer = document.getElementById("container");
+  clearElement(tableContainer);
+
+  /* Show a spinner */
+  let spinner = get_new_spinner();
+  tableContainer.appendChild(spinner);
+
+  const response = await fetch(apiUrl);
+  const jsonData = await response.json();
+
+  /* Remove Spinner and show data */
+  tableContainer.removeChild(spinner);
+
+  tableContainer.innerHTML = `
+    <table id="board" class="table table-dark text-center table-transparency">
+    </table>
+  `;
+  show_results(jsonData);
+}
+
 async function show_chesscom_top_players() {
   let tableContainer = document.getElementById("container");
   clearElement(tableContainer);
 
   tableContainer.innerHTML = `
-    <form id="chesscom-form">
+    <form id="chesscom-form">       
       <div class="mb-3">
-        <label for="tmt-1" class="form-label" style="color:white;">Enter Chess.com tournament URLs (Sample - https://www.chess.com/tournament/live/bcc-weekly-blitz-4560665)</label>
+        <label for="tmt-1" class="form-label text-white">Enter Chess.com tournament URLs (Sample - https://www.chess.com/tournament/live/bcc-weekly-blitz-4560665)</label>
         <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
       </div>
       <div class="mb-3">
@@ -98,25 +131,33 @@ async function show_chesscom_top_players() {
 }
 
 async function show_lichess_top_players() {
-  
   let tableContainer = document.getElementById("container");
   clearElement(tableContainer);
 
-  /* Show a spinner */
-  let spinner = get_new_spinner();
-  tableContainer.appendChild(spinner);
-  
-  const response = await fetch(PROD_BASE_URL + ENDPOINT + PLATFORM_LICHESS);
-  const jsonData = await response.json();
-
-  /* Remove Spinner and show data */
-  tableContainer.removeChild(spinner);
-
   tableContainer.innerHTML = `
-    <table id="board" class="table table-dark text-center table-transparency">
-    </table>
+    <form id="lichess-form">
+      <div class="mb-3">
+        <label for="tmt-1" class="form-label" style="color:white;">Enter Lichess tournament URLs (Sample - https://lichess.org/swiss/yGI0E2uG)</label>
+        <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-2" class="form-control" placeholder="URL 2">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-3" class="form-control" placeholder="URL 3">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-4" class="form-control" placeholder="URL 4">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-5" class="form-control" placeholder="URL 5">
+      </div>
+      <button id="lichess-submit" type="button" class="btn btn-primary">Submit</button>
+    </form>
   `;
-  show_results(jsonData);
+
+  const chessComSubmitButton = document.getElementById("lichess-submit");
+  chessComSubmitButton.addEventListener("click", process_lichess_top_players);
 
 }
 
