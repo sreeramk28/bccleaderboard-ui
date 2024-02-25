@@ -25,7 +25,6 @@ function clearElement(element) {
 function get_query_params() {
   let params = "";
   for (let i = 1; i <= 5; i++) {
-    //"tmt-" + toString(i)
     let eId = "tmt-" + i;
     let url = document.getElementById(eId).value;
     let trimmedUrl = url.trim();
@@ -46,8 +45,6 @@ async function process_chesscom_top_players() {
     apiUrl += "&urls=" + params;
   }
   
-  //alert(apiUrl);
-
   let tableContainer = document.getElementById("container");
   clearElement(tableContainer);
 
