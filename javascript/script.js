@@ -4,6 +4,11 @@ lichessOption.addEventListener("change", show_lichess_top_players);
 const chessComOption = document.getElementById("chesscom");
 chessComOption.addEventListener("change", show_chesscom_top_players);
 
+const chessComNoteButton = document.getElementById("chesscom-note");
+chessComNoteButton.addEventListener("click", () => {
+  alert("Tiebreak points data is not exposed by ChessCom APIs. So, players having equal values of both Ranking points (given by BCC) and TB1 (tournament points aggregate) are ordered randomly. TB2 (tournament tiebreak points aggregate) has to be manually computed from the tournament standings pages to determine the actual order.");
+});
+
 const PROD_BASE_URL = "https://bccleaderboard.onrender.com";
 const LOCAL_BASE_URL = "http://localhost:8080";
 const ENDPOINT = "/bestPlayers";
@@ -99,9 +104,9 @@ async function show_chesscom_top_players() {
   clearElement(tableContainer);
 
   tableContainer.innerHTML = `
-    <form id="chesscom-form">
+    <form id="chesscom-form">       
       <div class="mb-3">
-        <label for="tmt-1" class="form-label" style="color:white;">Enter Chess.com tournament URLs (Sample - https://www.chess.com/tournament/live/bcc-weekly-blitz-4560665)</label>
+        <label for="tmt-1" class="form-label text-white">Enter Chess.com tournament URLs (Sample - https://www.chess.com/tournament/live/bcc-weekly-blitz-4560665)</label>
         <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
       </div>
       <div class="mb-3">
