@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  flex-wrap: wrap;
+  flex-direction: row;
   font-size: 14px;
 }
 
@@ -10,6 +11,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   margin: 1rem 0rem;
 }
 
