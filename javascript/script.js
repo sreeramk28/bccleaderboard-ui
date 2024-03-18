@@ -107,12 +107,16 @@ async function process_active_players() {
     </table>
   `;
   
-  show_active_players_data(lichess_json_data, "boardbody-lichess");
-  show_active_players_data(chesscom_json_data, "boardbody-chesscom");
+  show_active_players_data(lichess_json_data, "boardbody-lichess", "board-lichess");
+  show_active_players_data(chesscom_json_data, "boardbody-chesscom", "board-chesscom");
 }
 
-function show_active_players_data(jsonData, table_body_id) {
+function show_active_players_data(jsonData, table_body_id, table_id) {
+  let tableBody = document.getElementById(table_body_id);
+  let table = document.getElementById(table_id);
+
   if (jsonData.activePlayers == undefined) {
+    table.style.display = "none";
     return;
   }
   let playerArray = []
@@ -120,7 +124,6 @@ function show_active_players_data(jsonData, table_body_id) {
     playerArray.push([player.username, player.nbTournamentsPlayed]);
   });
   
-  let tableBody = document.getElementById(table_body_id);
   for (let i = 0; i < playerArray.length; i++) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
