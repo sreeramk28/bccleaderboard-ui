@@ -1,5 +1,8 @@
-const lichessOption = document.getElementById("lichess");
-lichessOption.addEventListener("change", show_lichess_top_players);
+const lichessSwissOption = document.getElementById("lichess-swiss");
+lichessSwissOption.addEventListener("change", show_lichess_swiss_top_players);
+
+const lichessArenaOption = document.getElementById("lichess-arena");
+lichessArenaOption.addEventListener("change", show_lichess_arena_top_players);
 
 const chessComOption = document.getElementById("chesscom");
 chessComOption.addEventListener("change", show_chesscom_top_players);
@@ -15,6 +18,7 @@ chessComNoteButton.addEventListener("click", () => {
 const PROD_BASE_URL = "https://bccleaderboard.onrender.com";
 const LOCAL_BASE_URL = "http://localhost:8080";
 const BEST_PLAYERS_ENDPOINT = "/bestPlayers";
+const BEST_ARENA_PLAYERS_ENDPOINT = "/arenaBestPlayers"
 const ACTIVE_PLAYERS_ENDPOINT = "/activePlayers";
 
 const PLATFORM_CHESSCOM = "?platform=chesscom";
@@ -195,9 +199,11 @@ async function process_chesscom_top_players() {
 
 }
 
-async function process_lichess_top_players() {
+async function process_lichess_top_players(event) {
   let params = get_query_params();
-  let apiUrl = PROD_BASE_URL + BEST_PLAYERS_ENDPOINT + PLATFORM_LICHESS;
+  let tmt_type = event.target.id;
+  let ENDPOINT = tmt_type == "lichess-swiss-submit" ? BEST_PLAYERS_ENDPOINT : BEST_ARENA_PLAYERS_ENDPOINT;
+  let apiUrl = PROD_BASE_URL + ENDPOINT + PLATFORM_LICHESS;
 
   if (params.length > 0) {
     apiUrl += "&urls=" + params;
@@ -254,14 +260,13 @@ async function show_chesscom_top_players() {
 
 }
 
-async function show_lichess_top_players() {
+async function show_lichess_swiss_top_players() {
   let tableContainer = document.getElementById("container");
   clearElement(tableContainer);
-
   tableContainer.innerHTML = `
-    <form id="lichess-form">
+    <form id="lichess-swiss-form">
       <div class="mb-3">
-        <label for="tmt-1" class="form-label" style="color:white;">Enter Lichess tournament URLs (Sample - https://lichess.org/swiss/yGI0E2uG)</label>
+        <label for="tmt-1" class="form-label" style="color:white;">Enter Lichess Swiss tournament URLs (Sample - https://lichess.org/swiss/yGI0E2uG)</label>
         <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
       </div>
       <div class="mb-3">
@@ -276,12 +281,42 @@ async function show_lichess_top_players() {
       <div class="mb-3">
         <input type="text" id="tmt-5" class="form-control" placeholder="URL 5">
       </div>
-      <button id="lichess-submit" type="button" class="btn btn-primary">Submit</button>
+      <button id="lichess-swiss-submit" type="button" class="btn btn-primary">Submit</button>
+    </form>
+  `;
+  const lichessSwissSubmitButton = document.getElementById("lichess-swiss-submit");
+  lichessSwissSubmitButton.addEventListener("click", process_lichess_top_players);
+
+}
+
+async function show_lichess_arena_top_players() {
+  let tableContainer = document.getElementById("container");
+  clearElement(tableContainer);
+
+  tableContainer.innerHTML = `
+    <form id="lichess-arena-form">
+      <div class="mb-3">
+        <label for="tmt-1" class="form-label" style="color:white;">Enter Lichess Arena tournament URLs (Sample - https://lichess.org/tournament/YIzO1Ddi)</label>
+        <input type="text" id="tmt-1" class="form-control" placeholder="URL 1">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-2" class="form-control" placeholder="URL 2">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-3" class="form-control" placeholder="URL 3">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-4" class="form-control" placeholder="URL 4">
+      </div>
+      <div class="mb-3">
+        <input type="text" id="tmt-5" class="form-control" placeholder="URL 5">
+      </div>
+      <button id="lichess-arena-submit" type="button" class="btn btn-primary">Submit</button>
     </form>
   `;
 
-  const chessComSubmitButton = document.getElementById("lichess-submit");
-  chessComSubmitButton.addEventListener("click", process_lichess_top_players);
+  const lichessArenaSubmitButton = document.getElementById("lichess-arena-submit");
+  lichessArenaSubmitButton.addEventListener("click", process_lichess_top_players);
 
 }
 
